@@ -1,0 +1,5 @@
+import { useState } from 'react'
+import { Globe2, Menu, Radio } from 'lucide-react'
+import { Outlet } from 'react-router-dom'
+import Sidebar from './Sidebar'
+export default function AppLayout() { const [open, setOpen] = useState(false); return <div className="min-h-screen"><Sidebar open={open} onClose={() => setOpen(false)}/><div className="lg:pl-72"><header className="sticky top-0 z-30 flex h-16 items-center justify-between border-b border-slate-200/80 bg-white/90 px-4 backdrop-blur md:px-8"><div className="flex items-center gap-3"><button className="rounded-lg p-2 text-slate-600 lg:hidden" onClick={() => setOpen(true)} aria-label="Open navigation"><Menu/></button><div className="hidden items-center gap-2 text-xs font-semibold text-slate-500 sm:flex"><Radio size={15} className="text-emerald-500"/> Simulation environment ready</div></div><div className="flex items-center gap-2 rounded-full bg-emerald-50 px-3 py-1.5 text-xs font-semibold text-emerald-700"><Globe2 size={15}/> OSM · sourced context</div></header><main className="mx-auto max-w-[1500px] p-4 md:p-8"><Outlet/></main></div></div> }

@@ -1,0 +1,1 @@
+export default function ParameterInput({ label, hint, ...props }) { return <label><span className="label" title={hint}>{label}</span><input className="field" {...props}/>{hint && <span className="mt-1 block text-xs text-slate-400">{hint}</span>}</label> }

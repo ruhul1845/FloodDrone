@@ -1,0 +1,79 @@
+@import "tailwindcss";
+@import "leaflet/dist/leaflet.css";
+
+@theme {
+  --font-sans: "Inter", "Noto Sans Bengali", ui-sans-serif, system-ui, sans-serif;
+  --color-ink: #172b35;
+  --color-ocean: #087f7b;
+  --color-mist: #f3f8f7;
+}
+
+@layer base {
+  * { box-sizing: border-box; }
+  body { margin: 0; min-width: 320px; min-height: 100vh; background: #f5f8f7; color: #172b35; }
+  button, input, select { font: inherit; }
+  button { cursor: pointer; }
+  button:disabled { cursor: not-allowed; opacity: .55; }
+  :focus-visible { outline: 3px solid rgba(13, 148, 136, .28); outline-offset: 2px; }
+}
+
+@layer components {
+  .panel { @apply rounded-2xl border border-slate-200/80 bg-white shadow-sm; }
+  .panel-pad { @apply rounded-2xl border border-slate-200/80 bg-white p-5 shadow-sm md:p-6; }
+  .btn-primary { @apply inline-flex items-center justify-center gap-2 rounded-xl bg-teal-700 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-teal-800 disabled:hover:bg-teal-700; }
+  .btn-secondary { @apply inline-flex items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 transition hover:border-teal-300 hover:text-teal-800; }
+  .field { @apply w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm text-slate-800 outline-none transition focus:border-teal-500 focus:ring-3 focus:ring-teal-100; }
+  .label { @apply mb-1.5 block text-xs font-semibold uppercase tracking-wider text-slate-500; }
+  .eyebrow { @apply text-xs font-bold uppercase tracking-[0.18em] text-teal-700; }
+  .page-title { @apply mt-2 text-2xl font-bold tracking-tight text-slate-900 md:text-3xl; }
+}
+
+.recharts-responsive-container { min-height: 240px; }
+
+.network-map-canvas {
+  position: relative;
+  display: block;
+  width: 100%;
+  height: 72vh;
+  min-height: 620px;
+  max-height: 860px;
+  overflow: hidden;
+  border: 1px solid #d7ebe6;
+  border-radius: 1rem;
+  background-color: #eef8f5;
+  background-image: radial-gradient(#9bd5c8 1px, transparent 1px);
+  background-size: 20px 20px;
+}
+
+.openstreet-map-canvas {
+  width: 100%;
+  height: 72vh;
+  min-height: 620px;
+  max-height: 860px;
+  border: 1px solid #d7ebe6;
+  border-radius: 1rem;
+  overflow: hidden;
+  background: #dcecea;
+  z-index: 0;
+}
+
+.leaflet-tooltip.area-map-label,
+.leaflet-tooltip.node-map-label {
+  border: 0;
+  border-radius: 7px;
+  box-shadow: 0 2px 7px rgb(15 23 42 / 14%);
+  font-size: 10px;
+  font-weight: 700;
+  padding: 3px 7px;
+}
+
+.leaflet-tooltip.area-map-label { color: #9a3412; }
+.leaflet-tooltip.node-map-label { color: #334155; }
+
+@media (max-width: 640px) {
+  .network-map-canvas {
+    height: 580px;
+    min-height: 580px;
+  }
+  .openstreet-map-canvas { height: 580px; min-height: 580px; }
+}

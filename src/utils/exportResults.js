@@ -1,0 +1,3 @@
+const download = (name, content, type) => { const url = URL.createObjectURL(new Blob([content], { type })); const a = document.createElement('a'); a.href = url; a.download = name; a.click(); URL.revokeObjectURL(url) }
+export const exportJSON = (name, value) => download(name, JSON.stringify(value, (key, val) => val instanceof Map ? Object.fromEntries(val) : val, 2), 'application/json')
+export const exportCSV = (name, rows) => { if (!rows.length) return; const keys = Object.keys(rows[0]); download(name, [keys.join(','), ...rows.map((row) => keys.map((key) => JSON.stringify(row[key] ?? '')).join(','))].join('\n'), 'text/csv') }
