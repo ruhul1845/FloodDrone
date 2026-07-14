@@ -25,7 +25,7 @@ export default function NetworkMap({ state, maxBattery = 3 }) {
 
     <div className="mt-4 grid grid-cols-2 gap-2 text-xs sm:grid-cols-4">
       <span className="flex items-center gap-2 rounded-lg bg-slate-50 p-2"><Crosshair size={15}/>Target: {state.target}</span>
-      <span className="flex items-center gap-2 rounded-lg bg-slate-50 p-2"><BatteryCharging size={15}/>Battery: {state.battery}/{maxBattery}</span>
+      <span className="flex items-center gap-2 rounded-lg bg-slate-50 p-2"><BatteryCharging size={15}/>Charge: {Math.round(state.battery / maxBattery * 100)}%</span>
       <span className="flex items-center gap-2 rounded-lg bg-slate-50 p-2"><PackageOpen size={15}/>{state.payload}</span>
       <span className="flex items-center gap-2 rounded-lg bg-slate-50 p-2"><Cloud size={15}/>{state.weather}</span>
     </div>

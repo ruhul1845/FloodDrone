@@ -114,7 +114,7 @@ export default function ComparisonPage() {
 
     <section className="panel-pad mt-5">
       <div className="grid gap-5 lg:grid-cols-[1fr_1fr_1.5fr] lg:items-end">
-        <ParameterInput label="Battery capacity" type="number" min="1" step="1" value={resources.batteryCapacity} disabled={running} onChange={(event) => setResources((current) => ({ ...current, batteryCapacity: Math.max(1, Math.floor(Number(event.target.value) || 1)) }))}/>
+        <ParameterInput label="Charge resolution" hint="Internal levels used to represent 0–100% charge" type="number" min="1" step="1" value={resources.batteryCapacity} disabled={running} onChange={(event) => setResources((current) => ({ ...current, batteryCapacity: Math.max(1, Math.floor(Number(event.target.value) || 1)) }))}/>
         <ParameterInput label="Evaluation missions" hint="Identical episodes for both policies" type="number" min="10" step="10" value={episodes} disabled={running} onChange={(event) => setEpisodes(Math.max(10, Math.floor(Number(event.target.value) || 10)))}/>
         <div><span className="label">Value Iteration weather model</span><div className="inline-flex w-full rounded-xl bg-slate-100 p-1">{['accurate','inaccurate'].map((value) => <button key={value} disabled={running} onClick={() => setModel(value)} className={`flex-1 rounded-lg px-4 py-2 text-xs font-bold capitalize ${model === value ? 'bg-white text-teal-700 shadow-sm' : 'text-slate-500'}`}>{value} model</button>)}</div></div>
       </div>

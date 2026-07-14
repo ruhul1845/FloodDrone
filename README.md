@@ -27,7 +27,7 @@ npm run build
 
 ## Algorithms
 
-PSO searches a 16-dimensional allocation vector for food, medicine, missions, and batteries. Candidate positions are rounded, bounded, repaired, and scored using unmet need, critical medicine priority, time, energy, capacity, and fairness.
+For four villages, PSO searches an 8-dimensional allocation vector: four food quantities followed by four medicine quantities. Candidate positions are rounded, bounded, repaired, and scored using unmet need, critical medicine priority, time, energy, capacity, and fairness. Mission counts are derived from weighted load, and battery condition is represented as a health percentage rather than a number of battery packs.
 
 Value Iteration uses the environment's complete probability outcomes and Bellman optimality updates. Q-Learning instead samples the same environment and learns state-action values using an epsilon-greedy policy.
 
