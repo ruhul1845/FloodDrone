@@ -14,9 +14,9 @@ import { chattogramFloodLocalities, MAX_DYNAMIC_VILLAGES } from '../simulation/d
 
 const number = (value) => Number(value)
 export default function PSOPage() {
-  const { villages, setVillages, resources, setResources, results, saveResult } = useApp()
-  const [params, setParams] = useState(defaultPso), [error, setError] = useState(''), result = results.pso
-  const updateParam = (key, value) => setParams((p) => ({ ...p, [key]: number(value) }))
+  const { villages, setVillages, resources, setResources, psoParams:params, setPsoParams, results, saveResult } = useApp()
+  const [error, setError] = useState(''), result = results.pso
+  const updateParam = (key, value) => setPsoParams((p) => ({ ...p, [key]: number(value) }))
   const updateVillage = (index, key, value) => setVillages((current) => current.map((v, i) => i === index ? { ...v, [key]: Math.max(0, number(value)) } : v))
   const updateVillageCount = (value) => {
     const count = Math.max(1, Math.min(MAX_DYNAMIC_VILLAGES, Math.floor(number(value) || 1)))
@@ -24,7 +24,7 @@ export default function PSOPage() {
     saveResult('pso', null)
   }
   const execute = () => { try { setError(''); saveResult('pso', runPSO({ ...params, villages, resources })) } catch (e) { setError(e.message) } }
-  const reset = () => { if (!result || confirm('Reset parameters, data, and the current PSO result?')) { setParams(defaultPso); setVillages(defaultVillages); setResources(defaultResources); saveResult('pso', null) } }
+  const reset = () => { if (!result || confirm('Reset parameters, data, and the current PSO result?')) { setPsoParams(defaultPso); setVillages(defaultVillages); setResources(defaultResources); saveResult('pso', null) } }
   const baselines = result ? [{ name: 'PSO', ...result }, ...getBaselines(villages, resources, params.seed)] : []
   const allocations = result ? villages.map((v, i) => ({ village: v.id, foodDemand: v.foodDemand, food: result.food[i], medicineDemand: v.medicineDemand, medicine: result.medicine[i], missions: result.missions[i], batteryHealth: result.batteryHealth, satisfaction: result.satisfaction[i] })) : []
   return <div><PageIntro kicker="Part 1 · Optimization" title="PSO Resource Allocation" description="Each particle searches only food and medicine quantities. Mission counts are derived from weighted payload, while battery health is reported as a percentage." actions={<><button className="btn-secondary" onClick={reset}><RotateCcw size={16}/>Reset</button><button className="btn-primary" onClick={execute}><Play size={16}/>Run PSO</button></>}/>
@@ -37,7 +37,7 @@ export default function PSOPage() {
 }
 
 function Results({ result, allocations, baselines }) {
-  return <><section className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4"><MetricCard label="Best total cost" value={result.cost.toFixed(1)}/><MetricCard label="Food satisfied" value={`${result.foodSatisfaction.toFixed(1)}%`} tone="blue"/><MetricCard label="Medicine satisfied" value={`${result.medicineSatisfaction.toFixed(1)}%`} tone="rose"/><MetricCard label="Fairness score" value={`${result.fairnessScore.toFixed(1)}%`} tone="amber"/></section>
+  return <><section className="grid gap-3 sm:grid-cols-2 xl:grid-cols-5"><MetricCard label="Best total cost" value={result.cost.toFixed(1)}/><MetricCard label="Food satisfied" value={`${result.foodSatisfaction.toFixed(1)}%`} tone="blue"/><MetricCard label="Medicine satisfied" value={`${result.medicineSatisfaction.toFixed(1)}%`} tone="rose"/><MetricCard label="Battery risk" value={result.batteryRisk.toFixed(1)} tone="amber"/><MetricCard label="Fairness score" value={`${result.fairnessScore.toFixed(1)}%`} tone="amber"/></section>
   <section className="grid gap-5 lg:grid-cols-2"><div className="panel-pad"><div className="flex justify-between"><h2 className="font-bold">Fitness convergence</h2><button className="text-teal-700" title="Export PSO JSON" onClick={() => exportJSON('pso-result.json', result)}><Download size={18}/></button></div><LinePlot data={result.history} xKey="iteration" lines={[{key:'bestFitness',name:'Best fitness'},{key:'averageFitness',name:'Average fitness',color:'#f59e0b'}]}/></div><div className="panel-pad"><h2 className="font-bold">Demand vs allocation</h2><BarPlot data={allocations} xKey="village" bars={[{key:'foodDemand',name:'Food demand',color:'#bae6fd'},{key:'food',name:'Food allocated',color:'#0f766e'}]}/></div></section>
   <section className="panel-pad overflow-x-auto"><div className="flex items-center justify-between"><h2 className="font-bold">Allocation plan</h2><button className="btn-secondary" onClick={() => exportCSV('pso-allocation.csv', allocations)}><Download size={15}/>CSV</button></div><table className="mt-4 w-full min-w-[650px] text-left text-sm"><thead><tr className="border-b text-xs uppercase text-slate-500"><th className="pb-3">Village</th><th>Food</th><th>Medicine</th><th>Derived missions</th><th>Battery health</th><th>Satisfaction</th></tr></thead><tbody>{allocations.map((row,i) => <tr key={row.village} className="border-b border-slate-100"><td className="py-3 font-bold">{row.village}</td><td>{result.food[i]}</td><td>{result.medicine[i]}</td><td>{result.missions[i]}</td><td>{result.batteryHealth}%</td><td>{row.satisfaction.toFixed(1)}%</td></tr>)}</tbody></table></section>
   <section className="panel-pad overflow-x-auto"><h2 className="font-bold">Baseline comparison</h2><table className="mt-4 w-full min-w-[650px] text-left text-sm"><thead><tr className="border-b text-xs uppercase text-slate-500"><th className="pb-3">Method</th><th>Total cost</th><th>Unmet food</th><th>Unmet medicine</th><th>Fairness</th><th>Energy</th></tr></thead><tbody>{baselines.map((b) => <tr key={b.name} className="border-b border-slate-100"><td className="py-3 font-bold">{b.name}</td><td>{b.cost.toFixed(1)}</td><td>{b.unmetFood}</td><td>{b.unmetMedicine}</td><td>{b.fairnessScore.toFixed(1)}%</td><td>{b.energy.toFixed(1)}</td></tr>)}</tbody></table></section></>

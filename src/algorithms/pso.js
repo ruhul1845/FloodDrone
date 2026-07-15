@@ -46,10 +46,12 @@ export function evaluateAllocation(vector, villages = defaultVillages, resources
     return 0.6 * Math.min(1, food[i] / v.foodDemand) + 0.4 * Math.min(1, medicine[i] / v.medicineDemand)
   })
   const energy = missions.reduce((sum, m, i) => sum + m * villages[i].distance * 0.18, 0)
+  const batteryHealth = Math.max(0, Math.min(100, Number(resources.batteryHealth) || 0))
+  const batteryRisk = energy * (1 - batteryHealth / 100)
   const fairnessGap = Math.max(...satisfaction) - Math.min(...satisfaction)
-  const cost = 100 * criticalUnmet + 40 * nonCriticalUnmet + 10 * unmetFood + 5 * deliveryTime + 3 * energy + 100 * capacityViolations + 30 * fairnessGap
+  const cost = 100 * criticalUnmet + 40 * nonCriticalUnmet + 10 * unmetFood + 5 * deliveryTime + 3 * energy + 20 * batteryRisk + 100 * capacityViolations + 30 * fairnessGap
   return {
-    vector: x, food, medicine, missions, batteryHealth: Math.max(0, Math.min(100, Number(resources.batteryHealth) || 0)), cost, fitness: -cost, unmetFood, unmetMedicine,
+    vector: x, food, medicine, missions, batteryHealth, batteryRisk, cost, fitness: -cost, unmetFood, unmetMedicine,
     fairnessScore: (1 - fairnessGap) * 100, satisfaction: satisfaction.map((v) => v * 100), energy,
     deliveryTime, foodSatisfaction: (1 - unmetFood / villages.reduce((s, v) => s + v.foodDemand, 0)) * 100,
     medicineSatisfaction: (1 - unmetMedicine / villages.reduce((s, v) => s + v.medicineDemand, 0)) * 100,

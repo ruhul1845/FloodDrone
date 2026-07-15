@@ -14,9 +14,11 @@ export function runQLearning(environment, options = {}) {
   const rng = new SeededRandom(p.seed), qTable = new Map(), history = [], started = performance.now()
   let epsilon = p.epsilon, criticalSuccess = 0, criticalEpisodes = 0
   for (let episode = 1; episode <= p.episodes; episode++) {
-    const target = rng.pick(TARGETS), payload = rng.pick(PAYLOADS), weather = rng.pick(WEATHERS)
+    const planned = p.missionPlan?.length ? rng.pick(p.missionPlan) : null
+    const target = planned?.target || rng.pick(TARGETS), payload = planned?.payload || rng.pick(PAYLOADS), weather = rng.pick(WEATHERS)
     let state = environment.reset({ target, payload, weather }), rewardTotal = 0, success = false, batteryFailure = false, severeMoves = 0, step = 0
-    if (target.startsWith('V3') && payload !== 'FOOD') criticalEpisodes++
+    const criticalMission = environment.villages.find((village) => target.startsWith(village.id))?.urgency === 'Critical' && payload !== 'FOOD'
+    if (criticalMission) criticalEpisodes++
     for (step = 1; step <= p.maxSteps; step++) {
       const actions = environment.getValidActions(state), stateKey = environment.encodeState(state)
       const action = rng.next() < epsilon ? rng.pick(actions) : bestQAction(qTable, environment, state)
@@ -28,7 +30,7 @@ export function runQLearning(environment, options = {}) {
       rewardTotal += result.reward; state = result.state
       if (result.done) { success = Boolean(state.success); batteryFailure = result.event === 'battery-failure'; break }
     }
-    if (success && target.startsWith('V3') && payload !== 'FOOD') criticalSuccess++
+    if (success && criticalMission) criticalSuccess++
     history.push({ episode, reward: rewardTotal, steps: step, success: success ? 1 : 0, epsilon, batteryFailure: batteryFailure ? 1 : 0, severeMoves })
     epsilon = Math.max(p.minEpsilon, epsilon * p.epsilonDecay)
   }

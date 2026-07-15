@@ -8,8 +8,8 @@ An interactive academic AI laboratory for simulated drone delivery of food and m
 - Shared stochastic drone network, state/action encoder, rewards, weather, and mission termination
 - Tabular Value Iteration with convergence and policy inspection
 - Tabular epsilon-greedy Q-Learning with learning curves and Q-value inspection
-- Controlled 200-episode evaluation and model-mismatch experiment
-- Responsive seven-route Tailwind dashboard, Recharts plots, and browser-only JSON/CSV exports
+- Controlled 200-episode evaluation under shared weather conditions
+- Unified experiment workspace, responsive Tailwind dashboard, Recharts plots, and browser-only JSON/CSV exports
 - Vitest coverage for constraints, reproducibility, transitions, convergence, and learning
 
 ## Technology
@@ -27,9 +27,13 @@ npm run build
 
 ## Algorithms
 
-For four villages, PSO searches an 8-dimensional allocation vector: four food quantities followed by four medicine quantities. Candidate positions are rounded, bounded, repaired, and scored using unmet need, critical medicine priority, time, energy, capacity, and fairness. Mission counts are derived from weighted load, and battery condition is represented as a health percentage rather than a number of battery packs.
+For four villages, PSO searches an 8-dimensional allocation vector: four food quantities followed by four medicine quantities. Candidate positions are rounded, bounded, repaired, and scored using unmet need, critical medicine priority, time, energy, battery risk, capacity, and fairness. Mission counts are derived from weighted load, and battery condition is entered as a 0–100% health value. Battery risk is `energy × (1 − health/100)`, so degraded batteries increase the cost of energy-intensive plans.
 
 Value Iteration uses the environment's complete probability outcomes and Bellman optimality updates. Q-Learning instead samples the same environment and learns state-action values using an epsilon-greedy policy.
+
+## Documentation
+
+See the colorful [`docs/FLOOD_DRONE_DETAILED_REPORT.doc`](docs/FLOOD_DRONE_DETAILED_REPORT.doc) for the complete PSO, Value Iteration, Q-Learning, shared mission workflow, equations, examples, graphs, and comparison methodology.
 
 ## Project structure
 
@@ -39,7 +43,7 @@ src/
   simulation/     shared environment, RNG, baselines, evaluator
   data/           villages, resources, network
   components/     layout, charts, controls, network map
-  pages/          seven experiment and documentation routes
+  pages/          unified experiments, environment, dashboard, and methodology
   tests/          algorithm and environment tests
   utils/          JSON and CSV exports
 ```
